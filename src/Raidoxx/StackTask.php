@@ -17,15 +17,14 @@ class StackTask extends Task
             $world = $player->getWorld();
             $chunkEntities = $world->getChunkEntities($player->getPosition()->getFloorX() >> 4, $player->getPosition()->getFloorZ() >> 4);
 
-            $itemGroups = []; // Array para armazenar grupos de itens
+            $itemGroups = [];
 
             foreach ($chunkEntities as $entity) {
                 if ($entity instanceof ItemEntity) {
                     $item = $entity->getItem();
-                    $itemHash = $item->getTypeId() . ":" . $item->getStateId(); // Identificador único do item
+                    $itemHash = $item->getTypeId() . ":" . $item->getStateId();
 
                     if (!isset($itemGroups[$itemHash])) {
-                        // Se não existe um grupo para esse tipo de item, cria um novo
                         $itemGroups[$itemHash] = [];
                     }
 
@@ -35,18 +34,14 @@ class StackTask extends Task
                 }
             }
 
-            // Agrupamento de itens próximos feito, você pode manipular os grupos de itens aqui
-            // Por exemplo, empilhar os itens dentro dos grupos, fundindo-os
-
             foreach ($itemGroups as $group) {
                 if (count($group) > 1) {
-                    $firstItem = array_shift($group); // Pegue o primeiro item do grupo
+                    $firstItem = array_shift($group);
 
                     foreach ($group as $itemToMerge) {
-                        $total = $firstItem->getItem()->getCount() + $itemToMerge->getItem()->getCount(); // Calcule a quantidade total de itens
+                        $total = $firstItem->getItem()->getCount() + $itemToMerge->getItem()->getCount();
                         $firstItem->getItem()->setCount($total);
-                        // Junte os itens alterando a contagem do primeiro item
-                        $itemToMerge->flagForDespawn(); // Marque os outros itens para serem removidos
+                        $itemToMerge->flagForDespawn();
                     }
                 }
             }
